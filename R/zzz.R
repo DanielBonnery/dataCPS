@@ -1,7 +1,21 @@
 .onLoad<- function(libname, pkgname) {
-  if(!all(is.element(paste0("aspep",outer(c(2007,2009:2012),c(".rda","_gov.rda"),paste0)),
-                     list.files(file.path(find.package("dataASPEP"),"data"))))){
-    packageStartupMessage("This is the first time the package dataASPEP is loaded. Data is going to be downloaded from the Census Website.
+  if(!all(is.element(tolower(paste0("cps",format(seq(as.Date("20050101","%Y%m%d"),
+                                                     as.Date("20130110","%Y%m%d"),
+                                                    by="month"),"%Y%m"),".rda")),
+                     list.files(file.path(find.package("dataCPS"),"data"))))){
+    packageStartupMessage("This is the first time the package dataCPS is loaded. Data is going to be downloaded from the Census Website.
                           A connection to the web is needed.")
-    get_data_from_web()
+    z=find.package("dataCPS")
+    if(!file.exists(file.path(z,'data'))){dir.create(file.path(z,'data'))}
+    sapply(seq(as.Date("20050101","%Y%m%d"),
+               as.Date("20130110","%Y%m%d"),
+               by="month")[!is.element(tolower(paste0("cps",format(seq(as.Date("20050101","%Y%m%d"),
+                                                                       as.Date("20130110","%Y%m%d"),
+                                                                       by="month"),"%Y%m"),".rda")),
+                                       list.files(file.path(find.package("dataCPS"),"data")))],function(m){
+                                         
+    get_data_from_web(m,m,
+      directory=file.path(z,'data'),
+      createdatabase=FALSE,
+      createrdafiles=TRUE)})
   }}
