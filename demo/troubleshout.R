@@ -5,7 +5,7 @@ fn=download.unzip.cpsmicrodata(m)
 download.instruction.file(last.format.change.date.f(m))
 sas_ri=file.path(tempdir(),instructionfilenamef(last.format.change.date.f(m)))
 library(readr)
-varlit=    tolower(c(
+sel=    tolower(c(
   'pulineno',             'pwsswgt','hrhhid','hrlongid',
   'pwcmpwgt',
   'hwniwgt',
