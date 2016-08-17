@@ -8,6 +8,8 @@
                           A connection to the web is needed.")
     z=find.package("dataCPS")
     if(!file.exists(file.path(z,'data'))){dir.create(file.path(z,'data'))}
+    library(readr)
+    
     sapply(seq(deb,fin,by="month")[!is.element(tolower(paste0("cps",format(Months,"%Y%m"),".rda")),
                                        list.files(file.path(find.package("dataCPS"),"data")))],function(m){
                                          
