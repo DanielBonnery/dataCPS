@@ -1,4 +1,3 @@
-#library(dataCPS)
 #List of format change dates.
 format.change.dates<-as.Date(paste0(c("199401","199404","199506","199509","199801","200301","200405","200508","200701","200901","201001","201205","201301"),"01"),"%Y%m%d")#,"201401","201501")
 last.format.change.date.f<-function(m){max(format.change.dates[format.change.dates<=m])}
@@ -46,14 +45,13 @@ addtodb <- function(m){
 
 clean<-function(){sapply(list.files(tempdir()),unlink)}
 
-allsteps <- function(m,returnvalue=TRUE,createdatabase=FALSE,createrdafiles=FALSE,directory=tempdir(),varlist=NULL,
-                     cps.dbname="cps.db"){
+allsteps <- function(m,returnvalue=TRUE,createdatabase=FALSE,createrdafiles=FALSE,directory=tempdir(),varlist=varlist,
+                     cps.dbname="cps.db",col_types=col_types){
   x=download.unzip.cpsmicrodata(m)
-    
-    y=SAScii::read.SAScii2(
+    y=SAScii::read.SAScii3(
       fn=x, 
-      sas_ri=file.path(tempdir(),instructionfilenamef(last.format.change.date.f(m))))# , zipped = FALSE)
-    if(!is.null(varlist)){names(y)<-tolower(names(y));y<-y[intersect(names(y),tolower(varlist))]}
+      sas_ri=file.path(tempdir(),instructionfilenamef(last.format.change.date.f(m))),
+      col_types=col_types,sel=varlist)# , zipped = FALSE)]
       
     if(createrdafiles){
       assign( cps.tablenamef(m),y)
@@ -82,7 +80,27 @@ allsteps <- function(m,returnvalue=TRUE,createdatabase=FALSE,createrdafiles=FALS
       'prwtrace',
       'PRBLNONB',
       'GESTREC')),
-    directory=NULL,
+    col_types  =list(
+      'pulineno'=col_character(),
+      'pwsswgt'=col_double(),
+      'hrhhid'=col_character(),
+      'hrlongid'=col_character(),
+      'pwcmpwgt'=col_double(),
+      'hwniwgt'=col_double(),
+      'pumlr'  =col_character() ,
+      'pemlr'   =col_character(),
+      'pehspnon'=col_character(),
+      'prtage'=col_double(),
+      'peage'=col_double(),
+      'pesex'=col_character()   ,
+      'gestfips'=col_character(),
+      'puhhmem' =col_character(),
+      'prpertyp'=col_character(),
+      'ptdtrace'=col_character(),
+      'prwtrace'=col_character(),
+      'prblnonb'=col_character(),
+      'gestrec'=col_character()),
+        directory=NULL,
     createdatabase=FALSE,
     createrdafiles=FALSE,
     returnvalue=TRUE,
@@ -92,7 +110,7 @@ allsteps <- function(m,returnvalue=TRUE,createdatabase=FALSE,createrdafiles=FALS
       if ( file.exists( file.path(tempdir() , cps.dbname ) ) ){
         warning( "the database file already exists in your working directory.\nyou might encounter an error if you are running the same year as before or did not allow the program to complete.\ntry changing the cps.dbname in the settings above." )}}
     sapply(unique(do.call(c,lapply(monthseq,last.format.change.date.f))),download.instruction.file)
-    lapply(monthseq,allsteps,createdatabase=createdatabase,createrdafiles=createrdafiles,varlist=varlist,returnvalue=returnvalue,directory=directory)}
+    lapply(monthseq,allsteps,createdatabase=createdatabase,createrdafiles=createrdafiles,varlist=varlist,col_types=col_types,returnvalue=returnvalue,directory=directory)}
   
   
   
