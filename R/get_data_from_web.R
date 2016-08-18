@@ -52,7 +52,8 @@ allsteps <- function(m,returnvalue=TRUE,createdatabase=FALSE,createrdafiles=FALS
       fn=x, 
       sas_ri=file.path(tempdir(),instructionfilenamef(last.format.change.date.f(m))),
       col_types=col_types,sel=varlist)# , zipped = FALSE)]
-      
+      if(is.element("pwsswgt",names(y))){y$pwsswgt=y$pwsswgt/10000}
+      if(is.element("pwcmpwgt",names(y))){y$pwcmpwgt=y$pwcmpwgt/10000}
     if(createrdafiles){
       assign( cps.tablenamef(m),y)
       eval(parse(text=paste0("save(",cps.tablenamef(m),",file='",file.path(directory,cps.tablenamef(m)),".rda')")))}
