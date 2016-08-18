@@ -54,6 +54,7 @@ allsteps <- function(m,returnvalue=TRUE,createdatabase=FALSE,createrdafiles=FALS
       col_types=col_types,sel=varlist)# , zipped = FALSE)]
       if(is.element("pwsswgt",names(y))){y$pwsswgt=y$pwsswgt/10000}
       if(is.element("pwcmpwgt",names(y))){y$pwcmpwgt=y$pwcmpwgt/10000}
+      #if(is.element("pemlr",names(y))){y$pemlr=as.factor(y$pemlr)}
     if(createrdafiles){
       assign( cps.tablenamef(m),y)
       eval(parse(text=paste0("save(",cps.tablenamef(m),",file='",file.path(directory,cps.tablenamef(m)),".rda')")))}
@@ -80,7 +81,8 @@ allsteps <- function(m,returnvalue=TRUE,createdatabase=FALSE,createrdafiles=FALS
       'PTDTRACE',
       'prwtrace',
       'PRBLNONB',
-      'GESTREC')),
+      'GESTREC',
+      'hrintsta')),
     col_types  =list(
       'pulineno'=col_character(),
       'pwsswgt'=col_double(),
@@ -92,7 +94,7 @@ allsteps <- function(m,returnvalue=TRUE,createdatabase=FALSE,createrdafiles=FALS
       'pemlr'   =col_character(),
       'pehspnon'=col_character(),
       'prtage'=col_double(),
-      'peage'=col_double(),
+      'peage'=col_integer(),
       'pesex'=col_character()   ,
       'gestfips'=col_character(),
       'puhhmem' =col_character(),
@@ -100,7 +102,9 @@ allsteps <- function(m,returnvalue=TRUE,createdatabase=FALSE,createrdafiles=FALS
       'ptdtrace'=col_character(),
       'prwtrace'=col_character(),
       'prblnonb'=col_character(),
-      'gestrec'=col_character()),
+      'gestrec'=col_character(),
+      'hrintsta'=col_character()
+      ),
         directory=NULL,
     createdatabase=FALSE,
     createrdafiles=FALSE,
