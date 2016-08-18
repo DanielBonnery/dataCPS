@@ -110,7 +110,8 @@ allsteps <- function(m,returnvalue=TRUE,createdatabase=FALSE,createrdafiles=FALS
       if ( file.exists( file.path(tempdir() , cps.dbname ) ) ){
         warning( "the database file already exists in your working directory.\nyou might encounter an error if you are running the same year as before or did not allow the program to complete.\ntry changing the cps.dbname in the settings above." )}}
     sapply(unique(do.call(c,lapply(monthseq,last.format.change.date.f))),download.instruction.file)
-    lapply(monthseq,allsteps,createdatabase=createdatabase,createrdafiles=createrdafiles,varlist=varlist,col_types=col_types,returnvalue=returnvalue,directory=directory)}
+    lapply(monthseq,allsteps,createdatabase=createdatabase,createrdafiles=createrdafiles,varlist=varlist,col_types=col_types,returnvalue=returnvalue,directory=directory)
+    NULL}
   
   
   
