@@ -9,7 +9,8 @@ Imports: RSQLite,
 	data.table,
 	downloader,
 	descr,
-	downloader
+	downloader,
+	readr
 Suggests: 
 Description: Data
 Remotes: DanielBonnery/SAScii
