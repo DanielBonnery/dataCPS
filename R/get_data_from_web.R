@@ -82,7 +82,7 @@ allsteps <- function(m,returnvalue=TRUE,createdatabase=FALSE,createrdafiles=FALS
       'prwtrace',
       'PRBLNONB',
       'GESTREC',
-      'hrintsta')),
+      'hrintsta','hrmis')),
     col_types  =list(
       'pulineno'=col_character(),
       'pwsswgt'=col_double(),
@@ -103,7 +103,8 @@ allsteps <- function(m,returnvalue=TRUE,createdatabase=FALSE,createrdafiles=FALS
       'prwtrace'=col_character(),
       'prblnonb'=col_character(),
       'gestrec'=col_character(),
-      'hrintsta'=col_character()
+      'hrintsta'=col_character(),
+      'hrmis'=col_character()
       ),
         directory=NULL,
     createdatabase=FALSE,
