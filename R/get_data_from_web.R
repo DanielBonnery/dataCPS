@@ -100,26 +100,31 @@ clean<-function(){sapply(list.files(tempdir()),unlink)}
 #' @param returnvalue a boolean
 #' @param createrdafiles a boolean
 #' @param directory a character string (Default tempdir())
-#' @param varlist a character stringvector
-#' @param cps.dbname (Default "cps.db",
+#' @param varlist a character string vector
+#' @param cps.dbname (Default "cps.db")
 #' @param coltypes a named character string vector,
-#' 
-allsteps <- function(m,
+#' @examples 
+#' DD<-get_onemonth_data_from_web(
+#' m=as.Date("20050101","%Y%m%d"))
+#' plot(DD[c(5,9)])
+#' names(DD)
+
+get_onemonth_data_from_web <- function(m,
                      returnvalue=TRUE,
                      createdatabase=FALSE,
                      createrdafiles=FALSE,
                      directory=tempdir(),
-                     varlist=varlist,
-                     cps.dbname="cps.db",
-                     col_types=col_types){
+                     varlist=NULL,
+                     col_types  =NULL,
+                     cps.dbname="cps.db"){
   x=download.unzip.cpsmicrodata(m)
-    y=SAScii::read.SAScii3(
-      fn=x, 
-      sas_ri=file.path(tempdir(),instructionfilenamef(last.format.change.date.f(m))),
-      col_types=col_types,sel=varlist)# , zipped = FALSE)]
-      if(is.element("pwsswgt",names(y))){y$pwsswgt=y$pwsswgt/10000}
-      if(is.element("pwcmpwgt",names(y))){y$pwcmpwgt=y$pwcmpwgt/10000}
-      #if(is.element("pemlr",names(y))){y$pemlr=as.factor(y$pemlr)}
+  y=SAScii::read.SAScii3(
+    fn=x, 
+    sas_ri=file.path(tempdir(),instructionfilenamef(last.format.change.date.f(m))),
+    col_types=col_types,sel=varlist)# , zipped = FALSE)]
+  if(is.element("pwsswgt",names(y))){y$pwsswgt=y$pwsswgt/10000}
+  if(is.element("pwcmpwgt",names(y))){y$pwcmpwgt=y$pwcmpwgt/10000}
+  #if(is.element("pemlr",names(y))){y$pemlr=as.factor(y$pemlr)}
     if(createrdafiles){
       assign( cps.tablenamef(m),y)
       eval(parse(text=paste0("save(",cps.tablenamef(m),",file='",file.path(directory,cps.tablenamef(m)),".rda')")))}
@@ -139,7 +144,13 @@ allsteps <- function(m,
 #' @param createrdafiles a boolean(default FALSE),
 #' @param returnvalue a boolean
 #' @param cps.dbname="cps.db"
-#' 
+#' @examples 
+#' DD<-get_data_from_web(
+#' startingdate=as.Date("20050101","%Y%m%d"),
+#' varlist  =tolower(c('hryear4','hehousut')),
+#' col_types  =list('hryear4'=col_character(),  'hehousut'=col_character()),
+#' returnvalue=TRUE)
+#' plot(DD)
 
   get_data_from_web<-function(
     startingdate=as.Date("20050101","%Y%m%d"),
@@ -202,7 +213,7 @@ allsteps <- function(m,
       if ( file.exists( file.path(tempdir() , cps.dbname ) ) ){
         warning( "the database file already exists in your working directory.\nyou might encounter an error if you are running the same year as before or did not allow the program to complete.\ntry changing the cps.dbname in the settings above." )}}
     sapply(unique(do.call(c,lapply(monthseq,last.format.change.date.f))),download.instruction.file)
-    lapply(monthseq,allsteps,createdatabase=createdatabase,createrdafiles=createrdafiles,varlist=varlist,col_types=col_types,returnvalue=returnvalue,directory=directory)
+    lapply(monthseq,get_onemonth_data_from_web,createdatabase=createdatabase,createrdafiles=createrdafiles,varlist=varlist,col_types=col_types,returnvalue=returnvalue,directory=directory)
     NULL}
   
   
