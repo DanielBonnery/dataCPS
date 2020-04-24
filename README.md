@@ -68,7 +68,7 @@ graph1<-ggplot(data=Y,aes(x=month,y=y,group=pesex,color=pesex))+geom_line()
 print(graph1)
 ```
 
-![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png)
+![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-1-1.png)
 
 In this example we plot the direct estimate of the unemployment rate:
 
@@ -84,5 +84,5 @@ graph2<-ggplot(data=data.frame(month=as.Date(paste(names(U),"01"), "%Y%m%d"),Emp
 graph2
 ```
 
-![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png)
+<img src="figure/unnamed-chunk-2-1.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" width="100%" />
 
