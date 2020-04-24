@@ -1,7 +1,7 @@
 Package: dataCPS
 Type: Package
 Title: X
-Version: 1.0 
+Version: 1.0
 Date: 2016-08-18
 Author: D. Bonnery
 Maintainer: D. Bonnery  <dbonnery@umd.edu>
@@ -17,3 +17,4 @@ Remotes: DanielBonnery/SAScii
 License: GPL (>= 2)
 LazyLoad: yes
 LazyData: true
+RoxygenNote: 7.0.2

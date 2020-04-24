@@ -66,7 +66,12 @@ allsteps <- function(m,returnvalue=TRUE,createdatabase=FALSE,createrdafiles=FALS
     startingdate=as.Date("20050101","%Y%m%d"),
     enddate=startingdate,
     varlist  =tolower(c(
-      'pulineno',             'pwsswgt','hrhhid','hrlongid',
+      'pulineno',             
+      'pwsswgt',
+      'hrhhid',
+      'hrlongid',
+      'hrhhid2',
+      'cpsid',
       'pwcmpwgt',
       'hwniwgt',
       'PUMLR'   ,
@@ -88,6 +93,8 @@ allsteps <- function(m,returnvalue=TRUE,createdatabase=FALSE,createrdafiles=FALS
       'pwsswgt'=col_double(),
       'hrhhid'=col_character(),
       'hrlongid'=col_character(),
+      'hrhhid2'=col_character(),
+      'cpsid'=col_character(),
       'pwcmpwgt'=col_double(),
       'hwniwgt'=col_double(),
       'pumlr'  =col_character() ,
@@ -144,12 +151,15 @@ creeRtablefromDB<-function(m){
   peage <- intersect(c('peage','prtage'),dn)
   
   dd <- data.frame(dbGetQuery(conn,tolower(paste0( "SELECT
- hrhhid as hrlongid,
+ hrlongid,
+ hrhhid,
+ hrhhid2,
+ cpsid,
              pulineno,
              pwsswgt,
              pwcmpwgt,
              pemlr as pumlr,"
-                                                   ,peage, " as peage,
+            ,peage, " as peage,
              PESEX   ,
              GESTFIPS,
              prpertyp
@@ -160,7 +170,8 @@ creeRtablefromDB<-function(m){
 if(FALSE){
   load("nov05cps.Rdata")
   usePackages("plyr")
-  nov05cps<-rename(nov05cps,c("hrlongid"="hrhhid","pumlr"="pemlr","pesex"="PESEX","gestfips"="GESTFIPS"))
+  nov05cps<-rename(nov05cps,c("hrlongid"="hrhhid",
+                              "pumlr"="pemlr","pesex"="PESEX","gestfips"="GESTFIPS"))
   conn <- dbConnect(SQLite() , paste(dpath,cps.dbname,sep="/"))
   dbRemoveTable(conn,"nov05cps")
   dbWriteTable(conn, "nov05cps", nov05cps)
