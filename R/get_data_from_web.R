@@ -1,18 +1,56 @@
-#List of format change dates.
+#' List of format change dates.
 format.change.dates<-as.Date(paste0(c("199401","199404","199506","199509","199801","200301","200405","200508","200701","200901","201001","201205","201301"),"01"),"%Y%m%d")#,"201401","201501")
+
+#' Last format change date.
+#' 
+#' @param m a character string
+#' @details 
+#' this is valid as long as the Census.gov website does not change it. 
+#' @examples 
+#' last.format.change.date.f(as.Date("20050101","%Y%m%d"))
 last.format.change.date.f<-function(m){max(format.change.dates[format.change.dates<=m])}
 
 #Zip file name
 cpszipfilenamef<-function(m){paste0(tolower(format(m,"%b%y")),"pub.zip")}
+#' get the URL of format file as a function of month
+#' @param m a character string
+#' @details 
+#' this is valid as long as the Census.gov website does not change it. 
+#' @examples 
+#' URLf(as.Date("20050101","%Y%m%d"))
 URLf<-function(m){paste0("http://thedataweb.rm.census.gov/pub/cps/basic/",format(last.format.change.date.f(m),"%Y%m"),"-")}
-#Instruction file name function 
+
+#' name of the instruction file name  as a function of month
+#' @param m a date
+#' @details 
+#' this is valid as long as the Census.gov website does not change it. 
+#' @examples 
+#' instructionfilenamef(as.Date("20050101","%Y%m%d"))
 instructionfilenamef<- function(m){paste0('cpsb',tolower(format(m,"%b%y")),".sas")}
-#CPS R table name function
+#` CPS R table name function
+
+#' @param m a date
+#' @details 
+#' construct a table name as a function of month
+#' @examples 
+#' cps.tablenamef(as.Date("20050101","%Y%m%d"))
 cps.tablenamef <- function(m){tolower(paste0("cps",format(m,"%Y%m")))}
-#CPS table name function
+
+#' CPS data table name function
+#' @param m a date
+#' @details 
+#' construct a table name as a function of month
+#' @examples 
+#' dat.file.name.f(as.Date("20050101","%Y%m%d"))
 dat.file.name.f <- function(m){paste0(cps.tablenamef(m),".dat")}
 
-#Download and unzip cps microdata file for month m function
+#' Download and unzip cps microdata file for month m function
+#' @param m a date
+#' @returns a character string, the path to the unzipped file
+#' @details 
+#' download a zip file and unzip it in a temporary directory
+#' @examples 
+#' download.unzip.cpsmicrodata(as.Date("20050101","%Y%m%d"))
 download.unzip.cpsmicrodata<-function(m){
   file.location<-file.path( URLf(m),cpszipfilenamef(m))
   try(download.file(file.location, file.path(tempdir(),cpszipfilenamef(m)) , mode = "wb" ))
@@ -22,13 +60,26 @@ download.unzip.cpsmicrodata<-function(m){
               to=newname)
   file.remove(file.path(tempdir(),cpszipfilenamef(m)))
   newname}
-#Instruction file  download function
+
+#' Instruction file  download function
+#' @param m a date
+#' @returns a character string, the path to the unzipped file
+#' @details 
+#' download the instruction file for a specific month
+#' Not any month is valid
+#' @examples 
+#' download.instruction.file(as.Date("20040501","%Y%m%d"))
 download.instruction.file <- function(m){
   download.file(url=file.path( "http://www.nber.org/data/progs/cps-basic",instructionfilenamef(m)),
                 mode="wb",
                 destfile=file.path(tempdir(),instructionfilenamef(m)))}
 
-#Create an R file function
+#'Create an R file function
+#' @param m a date
+#' @details 
+#' creates a SQLite database if not existing and loads a downloaded file into it.  
+#' @examples 
+#' download.instruction.file(as.Date("20040501","%Y%m%d"))
 
 #For database:
 addtodb <- function(m){     
@@ -44,9 +95,23 @@ addtodb <- function(m){
   dbDisconnect( db )}
 
 clean<-function(){sapply(list.files(tempdir()),unlink)}
-
-allsteps <- function(m,returnvalue=TRUE,createdatabase=FALSE,createrdafiles=FALSE,directory=tempdir(),varlist=varlist,
-                     cps.dbname="cps.db",col_types=col_types){
+#' Downloads and extract data for one specific month
+#' @param m  a character string in the Date format %Y%m
+#' @param returnvalue a boolean
+#' @param createrdafiles a boolean
+#' @param directory a character string (Default tempdir())
+#' @param varlist a character stringvector
+#' @param cps.dbname (Default "cps.db",
+#' @param coltypes a named character string vector,
+#' 
+allsteps <- function(m,
+                     returnvalue=TRUE,
+                     createdatabase=FALSE,
+                     createrdafiles=FALSE,
+                     directory=tempdir(),
+                     varlist=varlist,
+                     cps.dbname="cps.db",
+                     col_types=col_types){
   x=download.unzip.cpsmicrodata(m)
     y=SAScii::read.SAScii3(
       fn=x, 
@@ -61,6 +126,20 @@ allsteps <- function(m,returnvalue=TRUE,createdatabase=FALSE,createrdafiles=FALS
     if(createdatabase){addtodb(m)}
     unlink(x)
     return(if(returnvalue){y}else{NULL})}
+
+
+#' downloads CPS data from web
+#' 
+#' @param startingdate a date (default: \code{as.Date("20050101","%Y%m%d")})
+#' @param endgdate a date (default: \code{startingdate})
+#' @param varlist a vector of character strings, the variables to keep from the downloaded file
+#' @param coltypes a vector of character strings, the variables to keep from the downloaded file
+#' @param directory where to save the file 
+#' @param createdatabase a boolean(default FALSE),
+#' @param createrdafiles a boolean(default FALSE),
+#' @param returnvalue a boolean
+#' @param cps.dbname="cps.db"
+#' 
 
   get_data_from_web<-function(
     startingdate=as.Date("20050101","%Y%m%d"),
