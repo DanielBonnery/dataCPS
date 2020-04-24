@@ -15,7 +15,13 @@ devtools::install_github("DanielBonnery/dataCPS")
 ```
 Note that installation is slow, because part of the installation process is the downloading of data from the Census Bureau website.
 
+
+
+
 # Demonstration
+
+
+By default, the package downloads zip files, and only select some variables, as shown in the following summary:
 
 
 ```r
@@ -47,6 +53,13 @@ summary(cps200501)
 ##                     Max.   :32265.5   Max.   :31739
 ```
 
+
+If other variables are wanted, use the `dataCPS::get_data_from_web` function:
+get_data_from_web()
+
+
+
+
 ```r
 library(dataCPS)
 data("cps200501",package="dataCPS")
@@ -58,31 +71,35 @@ monthsinperiod("200511","200603")
 ```
 
 ```r
-cps200511.200603<-rbind_period("200511","200603",c("pwsswgt","pesex","pemlr"))
+cps200511.200603<-rbind_period("200511","200603",c("pwsswgt","pesex"))
 Y<-plyr::ddply(
   cps200511.200603,
   ~month+pesex,
   function(d){data.frame(y=sum(d$pwsswgt))})
+
 library(ggplot2)
 graph1<-ggplot(data=Y,aes(x=month,y=y,group=pesex,color=pesex))+geom_line()
 print(graph1)
 ```
 
-![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-1-1.png)
+<img src="figure/unnamed-chunk-56-1.png" title="plot of chunk unnamed-chunk-56" alt="plot of chunk unnamed-chunk-56" width="100%" />
 
 In this example we plot the direct estimate of the unemployment rate:
 
 ```r
   cps200501.201201<-rbind_period("200501","201201",c("pwsswgt","pesex","pemlr"))
 Y<-plyr::daply(cps200501.201201,
-  ~month+pemlr,
+  ~month+pesex+pemlr,
   function(d){sum(d$pwsswgt)})
 
-U<-apply(Y[,c("1","2")],1,sum)/apply(Y[,c("1","2","3","4")],1,sum)
-graph2<-ggplot(data=data.frame(month=as.Date(paste(names(U),"01"), "%Y%m%d"),Employment.Rate=U),
-               aes(x=month,y=Employment.Rate,group = 1))+geom_line()+xlab("")+ylab("")+ggtitle("Direct estimates of the employment rate")
+U<-reshape2::melt(apply(Y[,,c("1","2")],1:2,sum)/apply(Y[,,c("1","2","3","4")],1:2,sum))
+U$month=as.Date(paste(U$month,"01"), "%Y%m%d")
+U$pesex=as.factor(U$pesex);
+U$pesex=forcats::fct_collapse(U$pesex,male="1",female="2")
+graph2<-ggplot(data=U[is.element(U$pesex,c("male","female")),],
+               aes(x=month,y=value,group = pesex,colour=pesex))+geom_line()+xlab("")+ylab("")+ggtitle("Direct estimates of the employment rate by gender")
 graph2
 ```
 
-<img src="figure/unnamed-chunk-2-1.png" title="plot of chunk unnamed-chunk-2" alt="plot of chunk unnamed-chunk-2" width="100%" />
+<img src="figure/unnamed-chunk-57-1.png" title="plot of chunk unnamed-chunk-57" alt="plot of chunk unnamed-chunk-57" width="100%" />
 
