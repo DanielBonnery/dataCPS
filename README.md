@@ -6,7 +6,7 @@ author: Daniel Bonnery
 # Data: Current Population Survey
 
 `dataCPS` is an R package that pulls CPS public microdata from the census bureau website on install and packs it into an 
-## Installation R package.
+## Installation.
 
 To install  the package, execute:
 
@@ -58,7 +58,7 @@ monthsinperiod("200511","200603")
 ```
 
 ```r
-cps200511.200603<-rbind_period("200511","200603",c("pwsswgt","pesex"))
+cps200511.200603<-rbind_period("200511","200603",c("pwsswgt","pesex","pemlr"))
 Y<-plyr::ddply(
   cps200511.200603,
   ~month+pesex,
@@ -69,3 +69,20 @@ print(graph1)
 ```
 
 ![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-1-1.png)
+
+```r
+Y<-plyr::daply(
+  cps200511.200603,
+  ~month+pemlr,
+  function(d){sum(d$pwsswgt)})
+
+U<-apply(Y[,c("1","2")],1,sum)/apply(Y[,c("1","2","3","4")],1,sum)
+graph2<-ggplot(data=data.frame(month=names(U),y=U),aes(x=month,y=y))+geom_line()
+graph2
+```
+
+```
+## geom_path: Each group consists of only one observation. Do you need to adjust the group aesthetic?
+```
+
+![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-1-2.png)
